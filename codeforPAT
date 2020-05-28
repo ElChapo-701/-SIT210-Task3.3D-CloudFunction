@@ -1,0 +1,94 @@
+int led = A1;
+int photosensor = A0;
+
+
+
+int intactValue;
+int brokenValue
+int beamThreshold;
+
+bool beamBroken = false;
+
+
+void setup() {
+    // This part is mostly the same:
+    pinMode(led,OUTPUT); // Our LED pin is output (lighting up the LED)
+   
+  
+    Particle.subscribe("wave", myHandler);
+    
+    digitalWrite(boardLed,HIGH);
+    delay(2000);
+
+  
+
+    digitalWrite(led,HIGH);
+    delay(500);
+
+
+    
+
+    intactValue = (on_1+on_2)/2;
+    brokenValue = (off_1+off_2)/2;
+    beamThreshold = (intactValue+brokenValue)/2;
+
+}
+
+
+void myHandler(const char *event, const char *data) {
+
+    if (strcmp(data, "wave") == 0)
+    {
+        digitalWrite(led, HIGH);
+        delay(500);
+        digitalWrite(led, LOW);
+        delay(500);
+        digitalWrite(led, HIGH);
+        delay(2000);
+        digitalWrite(led, LOW);
+        delay(500);
+        digitalWrite(led, HIGH);
+        delay(500);
+        digitalWrite(led, LOW);
+        delay(500);
+    }
+
+}
+
+void loop() {
+   
+    if (analogRead(photosensor)>beamThreshold) {
+        if (beamBroken==true) {
+            Particle.publish(("Deakin_RIOT_SIT210_Photon_Buddy", "wave, "intact", PUBLIC);
+           
+            beamBroken=false;
+        }
+    }
+
+    else {
+        if (beamBroken==false) {
+            
+            Particle.publish(("Deakin_RIOT_SIT210_Photon_Buddy", "wave", "broken", PUBLIC);
+            beamBroken=true;
+        }
+    }
+}
+
+
+
+void myHandler(const char *event, const char *data)
+{
+  
+
+    if (strcmp(data,"intact")==0) {
+        // if your buddy's beam is intact, then turn your board LED off
+        digitalWrite(led ,LOW);
+    }
+    else if (strcmp(data,"broken")==0) {
+        // if your buddy's beam is broken, turn your board LED on
+        digitalWrite(led, HIGH);
+    }
+    else {
+    
+    }
+}
